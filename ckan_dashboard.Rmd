@@ -1,0 +1,63 @@
+---
+title: "Pittsburgh WPRDC Data Sets Health Check"
+output: 
+  flexdashboard::flex_dashboard:
+    runtime: shiny
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(jsonlite)
+library(dplyr)
+library(DT)
+
+data <- reactive({
+  data <- fromJSON("https://data.wprdc.org/api/3/action/organization_show?id=9ecaff80-fb4a-457b-8141-e53f7c991890&include_datasets=True")$result
+})
+
+users <- reactive({
+  data <- data()
+  users <- data$users
+})
+
+dataSets <- reactive({
+  data <- data()
+  dataSets <- select(data$packages, -c(organization, relationships_as_object, relationships_as_subject, extras, groups)) %>%
+    mutate(metadata_modified = as.POSIXct(metadata_modified, format = "%Y-%m-%dT%H:%M:%S"),
+           update_period = case_when(frequency_publishing == "Hourly" ~ 1,
+                                     frequency_publishing == "Daily" ~ 24,
+                                     frequency_publishing == "Weekly" ~ 7*24,
+                                     frequency_publishing == "Monthly" ~ 30*24,
+                                     frequency_publishing == "Quarterly" ~ 4*30*24,
+                                     frequency_publishing == "Bi-Annually" ~ 6*30*24,
+                                     frequency_publishing == "Annually" ~ 365*24,
+                                     TRUE ~ NaN
+                                     ),
+           measure = difftime(Sys.time(), metadata_modified, units = "hours"),
+           alert = ifelse(measure >= update_period, 1, 0))
+})
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+DT::renderDataTable({
+  dataSets <- dataSets() %>%
+    select(c(title, metadata_modified, department, data_steward_name, frequency_publishing, alert)) %>%
+    as.data.frame() %>%
+    arrange(desc(alert), desc(metadata_modified))
+  
+  DT::datatable(dataSets) %>%
+    DT::formatStyle("alert",
+                target = 'row',
+                backgroundColor = styleEqual(c(1), c("#ef8a62"))
+    )
+})
+```
+
