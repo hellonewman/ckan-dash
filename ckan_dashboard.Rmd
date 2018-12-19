@@ -36,28 +36,26 @@ dataSets <- reactive({
                                      frequency_publishing == "Annually" ~ 365*24,
                                      TRUE ~ NaN
                                      ),
-           measure = difftime(Sys.time(), metadata_modified, units = "hours"),
-           alert = ifelse(measure >= update_period, 1, 0))
+           measure_hrs = difftime(Sys.time(), metadata_modified, units = "hours"),
+           alert = ifelse(measure_hrs >= update_period, 1, 0))
 })
 ```
 
-Column {data-width=650}
+Column
 -----------------------------------------------------------------------
-
-### Chart A
 
 ```{r}
 DT::renderDataTable({
   dataSets <- dataSets() %>%
-    select(c(title, metadata_modified, department, data_steward_name, frequency_publishing, alert)) %>%
+    select(title, metadata_modified, department, data_steward_name, frequency_publishing, measure_hrs, alert) %>%
     as.data.frame() %>%
+    mutate(measure_hrs = round(measure_hrs, 2)) %>%
     arrange(desc(alert), desc(metadata_modified))
   
-  DT::datatable(dataSets) %>%
+  DT::datatable(dataSets, options = list(pageLength = 25)) %>%
     DT::formatStyle("alert",
                 target = 'row',
                 backgroundColor = styleEqual(c(1), c("#ef8a62"))
     )
 })
 ```
-
