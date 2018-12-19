@@ -36,6 +36,7 @@ dataSets <- reactive({
                                      frequency_publishing == "Annually" ~ 365*24,
                                      TRUE ~ NaN
                                      ),
+           title = paste0('<a href="https://data.wprdc.org/dataset/', name, '" target="_blank">', title, '</a>'),
            measure_hrs = difftime(Sys.time(), metadata_modified, units = "hours"),
            alert = ifelse(measure_hrs >= update_period, 1, 0))
 })
@@ -52,7 +53,7 @@ DT::renderDataTable({
     mutate(measure_hrs = round(measure_hrs, 2)) %>%
     arrange(desc(alert), desc(metadata_modified))
   
-  DT::datatable(dataSets, options = list(pageLength = 25)) %>%
+  DT::datatable(dataSets, options = list(pageLength = 25), escape = F) %>%
     DT::formatStyle("alert",
                 target = 'row',
                 backgroundColor = styleEqual(c(1), c("#ef8a62"))
