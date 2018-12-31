@@ -14,8 +14,11 @@ library(jsonlite)
 library(dplyr)
 library(DT)
 
+# Find org ID from ckan API: https://data.wprdc.org/api/action/package_search?q=<search-term>
+org_id <- "9ecaff80-fb4a-457b-8141-e53f7c991890"
+
 data <- reactive({
-  data <- fromJSON("https://data.wprdc.org/api/3/action/organization_show?id=9ecaff80-fb4a-457b-8141-e53f7c991890&include_datasets=True")$result
+  data <- fromJSON(paste0("https://data.wprdc.org/api/3/action/organization_show?id=", org_ig, "&include_datasets=True"))$result
 })
 
 users <- reactive({
