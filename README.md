@@ -1,5 +1,5 @@
 # ckan-dash
-Dashboard to view when datasets have last been updated.
+Dashboard to view when datasets have last been updated on your deployment of the open data portal CKAN.
 
 _Author: Geoffrey Arnold_
 
@@ -18,3 +18,5 @@ Developers should replace the `org_id` and `host` variables in the Rmd file with
 * ckan-dash.proj: Project file
 * ckan_dash.Rmd: Main app file
 * ckan_dash.html: Html output
+
+### [CKAN API Documentation](https://docs.ckan.org/en/2.8/api/index.html?highlight=api)
