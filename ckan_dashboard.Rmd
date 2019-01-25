@@ -14,12 +14,15 @@ library(jsonlite)
 library(dplyr)
 library(DT)
 
+# Ckan Host url
+host <- "data.wprdc.org"
+
 # Find org ID from ckan API: https://data.wprdc.org/api/action/package_search?q=<search-term>
 org_id <- "9ecaff80-fb4a-457b-8141-e53f7c991890"
 
 # Get the users for the organization
 users <- reactive({
-  data <- fromJSON(paste0("https://data.wprdc.org/api/3/action/organization_show?id=", org_id))$result
+  data <- fromJSON(paste0("https://", host, "/api/3/action/organization_show?id=", org_id))$result
   users <- data$users
   
   return(users)
@@ -27,7 +30,7 @@ users <- reactive({
 
 # Grab all datasets on WPRDC and filter them by org id
 dataSets <- reactive({
-  data <- fromJSON("https://data.wprdc.org/api/action/package_search?rows=1000&start=0")$result
+  data <- fromJSON("https://", host, "/api/action/package_search?rows=1000&start=0")$result
   dataSets <- select(data$results, -c(relationships_as_object, relationships_as_subject, extras, groups)) %>%
     flatten() %>%
     filter(organization.id == org_id)%>%
@@ -43,7 +46,7 @@ dataSets <- reactive({
                                      TRUE ~ NaN
                                      ),
            # Resource link
-           title = paste0('<a href="https://data.wprdc.org/dataset/', name, '" target="_blank">', title, '</a>'),
+           title = paste0('<a href="https://', host, '/dataset/', name, '" target="_blank">', title, '</a>'),
            measure_hrs = difftime(Sys.time(), metadata_modified, units = "hours"),
            # Build Alert
            alert = ifelse(measure_hrs >= update_period, 1, 0))
