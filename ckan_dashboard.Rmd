@@ -17,18 +17,16 @@ library(DT)
 # Find org ID from ckan API: https://data.wprdc.org/api/action/package_search?q=<search-term>
 org_id <- "9ecaff80-fb4a-457b-8141-e53f7c991890"
 
-data <- reactive({
-  data <- fromJSON(paste0("https://data.wprdc.org/api/3/action/organization_show?id=", org_ig, "&include_datasets=True"))$result
-})
-
 users <- reactive({
-  data <- data()
+  data <- fromJSON(paste0("https://data.wprdc.org/api/3/action/organization_show?id=", org_id))$result
   users <- data$users
 })
 
 dataSets <- reactive({
-  data <- data()
-  dataSets <- select(data$packages, -c(organization, relationships_as_object, relationships_as_subject, extras, groups)) %>%
+  data <- fromJSON("https://data.wprdc.org/api/action/package_search?rows=1000&start=0")$result
+  dataSets <- select(data$results, -c(relationships_as_object, relationships_as_subject, extras, groups)) %>%
+    flatten() %>%
+    filter(organization.id == org_id)%>%
     mutate(metadata_modified = as.POSIXct(metadata_modified, format = "%Y-%m-%dT%H:%M:%S"),
            update_period = case_when(frequency_publishing == "Hourly" ~ 1,
                                      frequency_publishing == "Daily" ~ 24,
