@@ -21,6 +21,8 @@ org_id <- "9ecaff80-fb4a-457b-8141-e53f7c991890"
 users <- reactive({
   data <- fromJSON(paste0("https://data.wprdc.org/api/3/action/organization_show?id=", org_id))$result
   users <- data$users
+  
+  return(users)
 })
 
 # Grab all datasets on WPRDC and filter them by org id
@@ -45,6 +47,8 @@ dataSets <- reactive({
            measure_hrs = difftime(Sys.time(), metadata_modified, units = "hours"),
            # Build Alert
            alert = ifelse(measure_hrs >= update_period, 1, 0))
+  
+  return(dataSets)
 })
 ```
 
@@ -81,7 +85,8 @@ Row
 # List of users
 DT::renderDataTable({
   userTable <- users() %>%
-    select(display_name, name, capacity, state, created, number_created_packages) %>%
+    mutate(name = paste0('<a href="https://data.wprdc.org/organization/member_new/', org_id, "?user=", id, '" target="_blank">', name, '</a>')) %>%
+    select(display_name, name, capacity, state, created, number_created_packages, number_of_edits) %>%
     arrange(state, created)
-}, options = list(pageLength = 25))
+}, options = list(pageLength = 25), escape = FALSE)
 ```
