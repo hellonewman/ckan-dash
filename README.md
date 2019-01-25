@@ -5,7 +5,7 @@ _Author: Geoffrey Arnold_
 
 ## Set up
 
-Deploy app locally using either [Shiny Server](https://www.rstudio.com/products/shiny/shiny-server/) or [ShinyProxy](https://www.shinyproxy.io/deploying-apps/) or through [shinyapps.io](http://www.shinyapps.io/)
+Deploy app locally using either [Shiny Server](https://www.rstudio.com/products/shiny/shiny-server/), [ShinyProxy](https://www.shinyproxy.io/deploying-apps/) or through [shinyapps.io](http://www.shinyapps.io/)
 
 Developers should replace the `org_id` and `host` variables in the Rmd file with that of their own organization. 
 
