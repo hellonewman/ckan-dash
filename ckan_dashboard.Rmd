@@ -30,7 +30,7 @@ users <- reactive({
 
 # Grab all datasets on WPRDC and filter them by org id
 dataSets <- reactive({
-  data <- fromJSON("https://", host, "/api/action/package_search?rows=1000&start=0")$result
+  data <- fromJSON(paste0("https://", host, "/api/action/package_search?rows=1000&start=0"))$result
   dataSets <- select(data$results, -c(relationships_as_object, relationships_as_subject, extras, groups)) %>%
     flatten() %>%
     filter(organization.id == org_id)%>%
