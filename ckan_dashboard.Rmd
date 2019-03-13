@@ -1,5 +1,5 @@
 ---
-title: "Pittsburgh WPRDC Data Sets Health Check"
+title: "Allegheny County WPRDC Data Sets Health Check"
 output: 
   flexdashboard::flex_dashboard:
     runtime: shiny
@@ -18,7 +18,7 @@ library(DT)
 host <- "data.wprdc.org"
 
 # Find org ID from ckan API: https://data.wprdc.org/api/action/package_search?q=<search-term>
-org_id <- "9ecaff80-fb4a-457b-8141-e53f7c991890"
+org_id <- "f6dcf8fb-2051-4226-8c74-de9fbc699684"
 
 # Get the users for the organization
 users <- reactive({
